@@ -1,8 +1,12 @@
-import 'package:dezy_it_prasad_web/screens/MicroServices/HireSprintMaster.dart';
-import 'package:dezy_it_prasad_web/screens/MicroServices/HireUiUxDesigner.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
+import '../GlobalAppBar.dart';
 import '../colors.dart';
+import '../typography.dart';
+import 'HireSprintMaster/HireSprintMasterIntro.dart';
+import 'HireUiUxDesigner/HireUiUxDesignerIntro.dart';
 import 'HiringScreen.dart';
 
 List<String> modulesList = [
@@ -10,7 +14,10 @@ List<String> modulesList = [
   'Hire UiUx Designer',
 ];
 
+late int selectedIndex;
+
 late String hiringScreenName = '';
+late String hiringScreenPopupDescription = '';
 late String hiringPopupMessage = 'Would you like to hire a Sprint Master?';
 
 class MicroServices extends StatelessWidget {
@@ -22,40 +29,7 @@ class MicroServices extends StatelessWidget {
     final items = List<String>.generate(10000, (i) => "Item $i");
 
     return Scaffold(
-      appBar: AppBar(
-        elevation: 8,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text('Micro Services',
-            style: AppBarTheme.of(context).titleTextStyle),
-        leading: InkWell(
-          onTap: () => Navigator.of(context).pop(false),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                  size: 12,
-                ),
-                Text('Back',
-                    style: TextStyle(color: Colors.black, fontSize: 12))
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-            child: Image(
-              image: AssetImage('assets/icons/action.png'),
-              height: 20,
-              width: 20,
-            ),
-          )
-        ],
-      ),
+      appBar: GlobalAppBar('Micro Services', true),
       body: Container(
         color: Colors.white,
         child: ListView.builder(
@@ -73,11 +47,19 @@ class MicroServices extends StatelessWidget {
                   ),
                   onPressed: () {
                     if (index == 0) {
-                      hiringScreenName = 'Hire Sprint Master';
+                      hiringScreenName =
+                          'Would you like to hire a Sprint Master?';
+                      hiringScreenPopupDescription =
+                          'A Sprint Master will work with you throughout the design sprint process.';
+                      selectedIndex = 0;
                       showAlertDialog(context);
                     }
                     if (index == 1) {
-                      hiringScreenName = 'Hire UiUx Designer';
+                      hiringScreenName =
+                          'Would you like to hire a UI Designer?';
+                      hiringScreenPopupDescription =
+                          'The UI/UX Designer will design your prototypes.';
+                      selectedIndex = 1;
                       showAlertDialog(context);
                     }
                   },
@@ -108,33 +90,51 @@ class MicroServices extends StatelessWidget {
 
 showAlertDialog(BuildContext context) {
   // set up the buttons
-  Widget cancelButton = TextButton(
-    child: Text("Cancel"),
+  Widget cancelButton = MaterialButton(
+    splashColor: purpleAccent,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+        side: BorderSide(color: purpleAccent)),
+    child: Text("No", style: accentRegular16,),
     onPressed: () {
       Navigator.pop(context);
     },
   );
-  Widget continueButton = TextButton(
-    child: Text("Continue"),
+  Widget continueButton = MaterialButton(
+    splashColor: purpleAccent,
+    color: purpleAccent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(5),
+    ),
+    child: Text("Yes", style: whiteRegular16,),
     onPressed: () {
+      if (selectedIndex == 0) {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => HiringScreen(),
+            builder: (context) => HireSprintMasterIntro(),
           ),
         );
+      }
+      if (selectedIndex == 1) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HireUiUxDesignerIntro(),
+          ),
+        );
+      }
     },
   );
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-
+    actionsAlignment: MainAxisAlignment.center,
     title: Text(hiringScreenName),
-    content:
-        Text("Would you like to continue learning how to use Flutter alerts?"),
+    content: Text(hiringScreenPopupDescription),
     actions: [
       cancelButton,
-      continueButton,
+      Container(child: continueButton),
     ],
   );
 
@@ -142,7 +142,9 @@ showAlertDialog(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return alert;
+      return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 1, sigmaY: 1),
+          child: alert);
     },
   );
 }

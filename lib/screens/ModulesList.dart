@@ -5,6 +5,7 @@ import 'package:dezy_it_prasad_web/models/packageModel.dart';
 import 'package:dezy_it_prasad_web/screens/PaymentPortal/checkout.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'Community/Community.dart';
 import 'MicroServices/MicroServices.dart';
 import 'colors.dart';
 
@@ -70,14 +71,15 @@ class _ModulesListState extends State<ModulesList> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ComingSoon(),
+                          builder: (context) => MicroServices(),
                         ),
                       );
-                    }if (index == 2) {
+                    }
+                    if (index == 4) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => MicroServices(),
+                          builder: (context) => Community(),
                         ),
                       );
                     }

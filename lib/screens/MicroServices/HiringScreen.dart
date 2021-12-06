@@ -1,6 +1,8 @@
+import 'package:dezy_it_prasad_web/responsive.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../GlobalAppBar.dart';
 import '../colors.dart';
 import 'MicroServices.dart';
 import 'ResultMicroServices.dart';
@@ -19,22 +21,26 @@ class _HiringScreenState extends State<HiringScreen> {
       "To help us assign a UI/UX Designer as per your design sprint. Please answer the following questions.";
 
   int? selectedRadio;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedRadio=0;
-    selectedRadio2=0;
+    selectedRadio = 0;
+    selectedRadio2 = 0;
   }
+
   setSelectedRadio(val) {
     setState(() {
-      selectedRadio=val;
+      selectedRadio = val;
     });
   }
+
   int? selectedRadio2;
+
   setSelectedRadio2(val2) {
     setState(() {
-      selectedRadio2=val2;
+      selectedRadio2 = val2;
     });
   }
 
@@ -42,40 +48,7 @@ class _HiringScreenState extends State<HiringScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        elevation: 8,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(hiringScreenName,
-            style: AppBarTheme.of(context).titleTextStyle),
-        leading: InkWell(
-          onTap: () => Navigator.of(context).pop(false),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-            child: Row(
-              children: [
-                Icon(
-                  Icons.arrow_back_ios,
-                  color: Colors.black,
-                  size: 12,
-                ),
-                Text('Back',
-                    style: TextStyle(color: Colors.black, fontSize: 12))
-              ],
-            ),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
-            child: Image(
-              image: AssetImage('assets/icons/action.png'),
-              height: 20,
-              width: 20,
-            ),
-          )
-        ],
-      ),
+      appBar: GlobalAppBar(hiringScreenName, true),
       body: SingleChildScrollView(
           child: Container(
         color: Colors.white,
@@ -87,7 +60,7 @@ class _HiringScreenState extends State<HiringScreen> {
               Text(
                   'To help us assign a Sprint Master as per your design sprint. Please answer the following questions.',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: Responsive.isDesktop(context) ? 16 : 30,
                   )),
               SizedBox(
                 height: 40,
@@ -138,11 +111,7 @@ class _HiringScreenState extends State<HiringScreen> {
                   style: TextStyle(
                     fontSize: 16,
                   )),
-              SizedBox(
-                height: 20,
-              ),
-
-              Row(
+              Column(
                 children: [
                   Row(
                     children: [
@@ -183,7 +152,6 @@ class _HiringScreenState extends State<HiringScreen> {
                       Text('Personal'),
                     ],
                   ),
-
                 ],
               ),
               SizedBox(
@@ -204,11 +172,7 @@ class _HiringScreenState extends State<HiringScreen> {
                   style: TextStyle(
                     fontSize: 16,
                   )),
-              SizedBox(
-                height: 20,
-              ),
-
-              Row(
+              Column(
                 children: [
                   Row(
                     children: [
@@ -315,4 +279,3 @@ class _DropdownMenuState extends State<DropdownMenu> {
     );
   }
 }
-
