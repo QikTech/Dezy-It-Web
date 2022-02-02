@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+import '../../responsive.dart';
 import '../GlobalAppBar.dart';
 import '../colors.dart';
 import '../typography.dart';
@@ -27,6 +28,7 @@ class BlogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: GlobalAppBar('Community', true),
@@ -44,7 +46,7 @@ class BlogScreen extends StatelessWidget {
           ),
           width: MediaQuery.of(context).size.width,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding:  EdgeInsets.symmetric(horizontal: Responsive.isDesktop(context) ? size.width * 0.1 : 15.0, vertical: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -61,15 +63,15 @@ class BlogScreen extends StatelessWidget {
                       splashColor: purpleAccent,
                       onTap: () {
                         print('Share Button CLicked');
+                        print(communityBlogs.blogDescription);
                         showAlertDialog(context);
-
                       },
                       child: SvgPicture.asset(
                         'assets/icons/BTN_COMMUNITY_SHARE.svg',
                       ),
-                    ),
+                    ), //SHARE Button
                   ],
-                ),
+                ), // <-- Share & Blog Title
                 verticalSpace(height: 18),
                 Row(
                   children: [
@@ -110,11 +112,16 @@ class BlogScreen extends StatelessWidget {
                       },
                     ),
                   ],
-                ),
+                ), //<-- Follow Button and Author
                 verticalSpace(height: 18),
-                Image(
-                  image: AssetImage('assets/images/BlogCoverImage.png'),
-                  width: double.infinity,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(24.0),
+                  child: Image(
+                    fit: BoxFit.fitWidth,
+                    image: AssetImage('assets/images/BlogCoverImage.png'),
+                    width: double.infinity,
+                    height: 400,
+                  ),
                 ),
                 verticalSpace(height: 8),
                 Text(
@@ -122,23 +129,6 @@ class BlogScreen extends StatelessWidget {
                   style: grayRegular14,
                 ),
                 verticalSpace(height: 8),
-                // Row(
-                //   children: [
-                //     Spacer(),
-                //     Row(children: [
-                //       Icon(
-                //         Icons.remove_red_eye_outlined,
-                //         color: Color(0xff888888),
-                //         size: 18,
-                //       ),
-                //       horizontalSpace(width: 6),
-                //       Text(
-                //         "${communityBlogs.blogViews}",
-                //         style: grayRegular12,
-                //       )
-                //     ]),
-                //   ],
-                // ),
                 CommentSection(),
               ],
             ),
@@ -157,7 +147,12 @@ class CommentSection extends StatefulWidget {
 }
 
 class _CommentSectionState extends State<CommentSection> {
+  List<String> comments = [];
   final _commentText = TextEditingController();
+
+  DateTime now = new DateTime.now();
+
+  // DateTime date = new DateTime(now.year, now.month, now.day);
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +175,7 @@ class _CommentSectionState extends State<CommentSection> {
                   Flexible(
                     child: TextFormField(
                       controller: _commentText,
+                      autovalidateMode: AutovalidateMode.always,
                       onChanged: (value) => _commentText.text,
                       decoration: InputDecoration(
                         contentPadding:
@@ -202,8 +198,12 @@ class _CommentSectionState extends State<CommentSection> {
                         'assets/icons/BTN_COMMUNITY_SEND.svg',
                       ),
                       onTap: () {
-                        debugPrint('222');
-                        print('_commentText.text');
+                        // debugPrint('222');
+                        setState(() {
+                          comments.add(_commentText.text);
+                          _commentText.clear();
+                        });
+                        print(comments.length);
                       }),
                 ],
               ),
@@ -220,192 +220,214 @@ class _CommentSectionState extends State<CommentSection> {
                         ),
                         horizontalSpace(width: 14),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: 280,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                          child: InkWell(
+                            onTap: () {
+                              print('Expand Pressed');
+                            },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 280,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Shuvam',
+                                        style: grayMedium14,
+                                      ),
+                                      Text(
+                                        DateTime.now().toString(),
+                                        style: gray2Regular12,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                verticalSpace(height: 5),
+                                SizedBox(
+                                  width: 280,
+                                  child: Text(
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam, interdum sociis sed enim, porta morbi. Eget et, non rhoncus diam habitasse at. ',
+                                    maxLines: 5,
+                                    style: grayRegular12,
+                                  ),
+                                ),
+                                verticalSpace(height: 12),
+                                Row(
                                   children: [
-                                    Text(
-                                      'Shuvam',
-                                      style: grayMedium14,
+                                    InkWell(
+                                      borderRadius: BorderRadius.circular(8),
+                                      splashColor: purpleAccent,
+                                      onTap: () {
+                                        print('Reply Pressed');
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Reply',
+                                          style: accentRegular12,
+                                        ),
+                                      ),
                                     ),
-                                    Text(
-                                      '20 days ago',
-                                      style: gray2Regular12,
-                                    ),
+                                    horizontalSpace(width: 20),
+                                    InkWell(
+                                        borderRadius: BorderRadius.circular(25),
+                                        splashColor: purpleAccent,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SvgPicture.asset(
+                                            'assets/icons/LIKE_OUTLINED.svg',
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          debugPrint('222');
+                                          print('_commentText.text');
+                                        }),
+                                    InkWell(
+                                        borderRadius: BorderRadius.circular(25),
+                                        splashColor: purpleAccent,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SvgPicture.asset(
+                                            'assets/icons/DISLIKE_OUTLINED.svg',
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          debugPrint('222');
+                                          print('_commentText.text');
+                                        }),
                                   ],
                                 ),
-                              ),
-                              verticalSpace(height: 5),
-                              SizedBox(
-                                width: 280,
-                                child: Text(
-                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam, interdum sociis sed enim, porta morbi. Eget et, non rhoncus diam habitasse at. ',
-                                  maxLines: 5,
-                                  style: grayRegular12,
-                                ),
-                              ),
-                              verticalSpace(height: 12),
-                              Row(
-                                children: [
-                                  InkWell(
-                                    borderRadius: BorderRadius.circular(8),
-                                    splashColor: purpleAccent,
-                                    onTap: () {
-                                      print('Reply Pressed');
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Reply',
-                                        style: accentRegular12,
-                                      ),
-                                    ),
-                                  ),
-                                  horizontalSpace(width: 20),
-                                  InkWell(
-                                      borderRadius: BorderRadius.circular(25),
-                                      splashColor: purpleAccent,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: SvgPicture.asset(
-                                          'assets/icons/LIKE_OUTLINED.svg',
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        debugPrint('222');
-                                        print('_commentText.text');
-                                      }),
-                                  InkWell(
-                                      borderRadius: BorderRadius.circular(25),
-                                      splashColor: purpleAccent,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: SvgPicture.asset(
-                                          'assets/icons/DISLIKE_OUTLINED.svg',
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        debugPrint('222');
-                                        print('_commentText.text');
-                                      }),
-                                ],
-                              ),
-                              verticalSpace(height: 14),
-                              Positioned(
-                                left: -20,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: 5,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CircleAvatar(radius: 18,
-                                            backgroundColor: purpleAccent,
-                                          ),
-                                          horizontalSpace(width: 14),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: 226,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
+                                verticalSpace(height: 14),
+                                AnimatedContainer(
+                                  duration: Duration(milliseconds: 500),
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    itemCount: comments.length,
+                                    itemBuilder:
+                                        (BuildContext context, int index) {
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 18,
+                                              backgroundColor: purpleAccent,
+                                            ),
+                                            horizontalSpace(width: 14),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                SizedBox(
+                                                  width: 226,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Shuvam',
+                                                        style: grayMedium14,
+                                                      ),
+                                                      Text(
+                                                        DateTime.now()
+                                                            .toString(),
+                                                        style: gray2Regular12,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                verticalSpace(height: 5),
+                                                SizedBox(
+                                                  width: 226,
+                                                  child: Text(
+                                                    comments[index],
+                                                    maxLines: 5,
+                                                    style: grayRegular12,
+                                                  ),
+                                                ),
+                                                verticalSpace(height: 4),
+                                                Row(
                                                   children: [
-                                                    Text(
-                                                      'Shuvam',
-                                                      style: grayMedium14,
+                                                    InkWell(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      splashColor: purpleAccent,
+                                                      onTap: () {
+                                                        print('Reply Pressed');
+                                                      },
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                bottom: 8,
+                                                                left: 0,
+                                                                right: 8,
+                                                                top: 8),
+                                                        child: Text(
+                                                          'Reply',
+                                                          style:
+                                                              accentRegular12,
+                                                        ),
+                                                      ),
                                                     ),
-                                                    Text(
-                                                      '20 days ago',
-                                                      style: gray2Regular12,
-                                                    ),
+                                                    horizontalSpace(width: 20),
+                                                    InkWell(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                        splashColor:
+                                                            purpleAccent,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            'assets/icons/LIKE_OUTLINED.svg',
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          debugPrint('222');
+                                                          print('LIKE');
+                                                        }),
+                                                    InkWell(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25),
+                                                        splashColor:
+                                                            purpleAccent,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .all(8.0),
+                                                          child:
+                                                              SvgPicture.asset(
+                                                            'assets/icons/DISLIKE_OUTLINED.svg',
+                                                          ),
+                                                        ),
+                                                        onTap: () {
+                                                          debugPrint('222');
+                                                          print('DISLIKE');
+                                                        }),
                                                   ],
                                                 ),
-                                              ),
-                                              verticalSpace(height: 5),
-                                              SizedBox(
-                                                width: 226,
-                                                child: Text(
-                                                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Diam, interdum sociis sed enim, porta morbi. Eget et, non rhoncus diam habitasse at. ',
-                                                  maxLines: 5,
-                                                  style: grayRegular12,
-                                                ),
-                                              ),
-                                              verticalSpace(height: 4),
-                                              Row(
-                                                children: [
-                                                  InkWell(
-                                                    borderRadius:
-                                                        BorderRadius.circular(8),
-                                                    splashColor: purpleAccent,
-                                                    onTap: () {
-                                                      print('Reply Pressed');
-                                                    },
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(bottom: 8,left: 0,right: 8,top: 8),
-                                                      child: Text(
-                                                        'Reply',
-                                                        style: accentRegular12,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  horizontalSpace(width: 20),
-                                                  InkWell(
-                                                      borderRadius:
-                                                          BorderRadius.circular(25),
-                                                      splashColor: purpleAccent,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                        child: SvgPicture.asset(
-                                                          'assets/icons/LIKE_OUTLINED.svg',
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        debugPrint('222');
-                                                        print('LIKE');
-                                                      }),
-                                                  InkWell(
-                                                      borderRadius:
-                                                          BorderRadius.circular(25),
-                                                      splashColor: purpleAccent,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                                8.0),
-                                                        child: SvgPicture.asset(
-                                                          'assets/icons/DISLIKE_OUTLINED.svg',
-                                                        ),
-                                                      ),
-                                                      onTap: () {
-                                                        debugPrint('222');
-                                                        print('DISLIKE');
-                                                      }),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -443,6 +465,7 @@ class _CommentSectionState extends State<CommentSection> {
 }
 
 showAlertDialog(BuildContext context) {
+  Size size = MediaQuery.of(context).size;
   // set up the buttons
   Widget cancelButton = TextButton(
     child: Text("Cancel"),
@@ -456,6 +479,9 @@ showAlertDialog(BuildContext context) {
   );
 
   // set up the AlertDialog
+
+  final _shareLink = TextEditingController();
+
   AlertDialog alert = AlertDialog(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16.0))),
@@ -463,7 +489,7 @@ showAlertDialog(BuildContext context) {
       content: Stack(
         children: <Widget>[
           Container(
-            width: MediaQuery.of(context).size.width,
+            width: MediaQuery.of(context).size.width*0.2,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -481,7 +507,8 @@ showAlertDialog(BuildContext context) {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -497,8 +524,9 @@ showAlertDialog(BuildContext context) {
                       CircleAvatar(
                         backgroundColor: purpleAccent,
                       ),
-                    ],),
-                ),
+                    ],
+                  ),
+                ), //<-- SOCIAL ICONS
                 Text(
                   "OR",
                   textAlign: TextAlign.center,
@@ -508,28 +536,61 @@ showAlertDialog(BuildContext context) {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30,vertical: 30),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                   child: Row(
                     children: [
-                      Expanded(
-                        flex: 4,
-                        child: Container(
-                          height: 22,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3.21),
-                            border: Border.all(color: Color(0xffe8eaf7), width: 0.64, ),
-                            color: Colors.white,
+                      Flexible(
+                        fit: FlexFit.tight,
+                        flex: 6,
+                        child: TextFormField(
+                          controller: _shareLink,
+                          autovalidateMode: AutovalidateMode.always,
+                          onChanged: (value) => _shareLink.text,
+                          decoration: InputDecoration(
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 4,
+                                color: Color(0xffE8EAF7),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                width: 4,
+                                color: Color(0xffE8EAF7),
+                              ),
+                            ),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 14),
+                            isDense: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8.0),
+                              borderSide: BorderSide(
+                                width: 4,
+                                color: Color(0xffE8EAF7),
+                              ),
+                            ),
+                            fillColor: Colors.white,
+                            hintText: 'https://Link',
+                            // hintStyle: TextStyle(color: Color(0xffe5e5e5)),
+                            filled: true,
                           ),
                         ),
                       ),
-                        horizontalSpace(width: 10),
-                      Expanded(
-                        child: Container(
-                          height: 22,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(3.21),
-                            border: Border.all(color: Color(0xffe8eaf7), width: 0.64, ),
-                            color: Colors.white,
+                      horizontalSpace(width: 10),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        flex: 1,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () {},
+                            splashColor: purpleAccent,
+                            child: SvgPicture.asset(
+                              'assets/icons/CopyLink.svg',
+                              height: 40,
+                              width: 40,
+                            ),
                           ),
                         ),
                       ),
@@ -540,8 +601,8 @@ showAlertDialog(BuildContext context) {
             ),
           ),
           Positioned(
-            top: 0.0,
-            right: 0.0,
+            top: 0,
+            right: 10,
             child: InkWell(
               borderRadius: BorderRadius.circular(25),
               splashColor: purpleAccent,
@@ -549,12 +610,17 @@ showAlertDialog(BuildContext context) {
                 print('Share Button CLicked');
                 Navigator.pop(context);
               },
-              child: Icon(Icons.close, color: purpleAccent,),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.close,
+                  color: purpleAccent,
+                ),
+              ),
             ),
           ),
         ],
-      )
-  );
+      ));
 
   // show the dialog
   showDialog(
@@ -563,4 +629,63 @@ showAlertDialog(BuildContext context) {
       return alert;
     },
   );
+} //SHARE POPUP
+
+class ExpandedSection extends StatefulWidget {
+  final Widget child;
+  final bool expand;
+
+  ExpandedSection({this.expand = false, required this.child});
+
+  @override
+  _ExpandedSectionState createState() => _ExpandedSectionState();
+}
+
+class _ExpandedSectionState extends State<ExpandedSection>
+    with SingleTickerProviderStateMixin {
+  late AnimationController expandController;
+  late Animation<double> animation;
+
+  @override
+  void initState() {
+    super.initState();
+    prepareAnimations();
+    _runExpandCheck();
+  }
+
+  ///Setting up the animation
+  void prepareAnimations() {
+    expandController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+    animation = CurvedAnimation(
+      parent: expandController,
+      curve: Curves.fastOutSlowIn,
+    );
+  }
+
+  void _runExpandCheck() {
+    if (widget.expand) {
+      expandController.forward();
+    } else {
+      expandController.reverse();
+    }
+  }
+
+  @override
+  void didUpdateWidget(ExpandedSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _runExpandCheck();
+  }
+
+  @override
+  void dispose() {
+    expandController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizeTransition(
+        axisAlignment: 1.0, sizeFactor: animation, child: widget.child);
+  }
 }

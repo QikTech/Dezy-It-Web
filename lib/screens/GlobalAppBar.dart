@@ -17,6 +17,7 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return AppBar(
+      elevation: 4,
       foregroundColor: Colors.yellow,
       title: Text(title, style: AppBarTheme.of(context).titleTextStyle),
       centerTitle: true,
@@ -51,7 +52,6 @@ class GlobalAppBar extends StatelessWidget implements PreferredSizeWidget {
         )
       ],
       backgroundColor: Theme.of(context).cardColor,
-      elevation: 0,
     );
   }
 
