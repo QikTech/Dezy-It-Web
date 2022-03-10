@@ -7,6 +7,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'Community/Community.dart';
 import 'MicroServices/MicroServices.dart';
+import 'Sharing Module/share.dart';
+import 'Timeline/timeline.dart';
 import 'colors.dart';
 
 
@@ -63,7 +65,7 @@ class _ModulesListState extends State<ModulesList> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PaymentResult(),
+                          builder: (context) => Share(),
                         ),
                       );
                     }
@@ -72,6 +74,14 @@ class _ModulesListState extends State<ModulesList> {
                         context,
                         MaterialPageRoute(
                           builder: (context) => MicroServices(),
+                        ),
+                      );
+                    }
+                    if (index == 3) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => TimelineModule(),
                         ),
                       );
                     }
